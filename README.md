@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/venupasumurthy/stem_engine/blob/main/cropped_circle_image.png?raw=true" alt="MPC Cal Logo" width="120" height="120">
+  <img src="https://github.com/venupasumurthy/stem_engine/blob/main/cropped_circle_image.png?raw=true" alt="MPC Cal Logo" width="180" height="180">
 </p>
 
 <div align="center">
@@ -288,7 +288,7 @@ Image Upload
 
 # 🎯 Vision
 
-STEM Engine is designed to evolve into a fully adaptive AI academic mentor —
+STEM Engine is designed to evolve into a fully adaptive AI academic mentor 
 combining reasoning, visualization, gamification, and analytics into a unified intelligent learning ecosystem.
 
 ---
@@ -305,5 +305,7 @@ combining reasoning, visualization, gamification, and analytics into a unified i
 | Sree Harshitha Panchabavi | Developer |
 | Venu Munendra Kumar Pasumurthy | AI Architect |
 ---
+# 🔎 Contact
+Email :venupasumurthy0509@gmail.com
 
 ⭐ If you like STEM Engine, consider giving it a star on GitHub.
