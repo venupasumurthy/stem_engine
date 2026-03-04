@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="src/stemengine-logo.png" alt="MPC Cal Logo" width="120" height="120">
+  <img src="https://github.com/venupasumurthy/stem_engine/blob/main/cropped_circle_image.png?raw=true" alt="MPC Cal Logo" width="120" height="120">
 </p>
 
 <div align="center">
