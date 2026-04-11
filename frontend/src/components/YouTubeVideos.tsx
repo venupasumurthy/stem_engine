@@ -192,23 +192,37 @@ export const YouTubeVideos: React.FC<YouTubeVideosProps> = ({ role, communityId 
                 ))}
             </div>
 
-            {/* Active Video Player */}
+            {/* Active Video Player Cinema Mode */}
             {activeVideo && (
-                <div className="mb-6 bg-[#0b1121] rounded-2xl overflow-hidden border border-white/5 animate-in fade-in duration-300">
-                    <div className="aspect-video w-full">
+                <div className="mb-10 w-full bg-[#0b1121] rounded-[2rem] overflow-hidden border border-white/10 animate-in zoom-in-95 duration-700 shadow-[0_0_100px_rgba(0,0,0,0.8)] relative group/player mx-auto max-w-[1400px]">
+                    <div className="relative w-full overflow-hidden" style={{ paddingBottom: '56.25%' }}>
                         <iframe
-                            src={`https://www.youtube.com/embed/${getYouTubeId(activeVideo.url)}?autoplay=1`}
-                            className="w-full h-full"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            src={`https://www.youtube.com/embed/${getYouTubeId(activeVideo.url)}?autoplay=1&modestbranding=1&rel=0&iv_load_policy=3&vq=hd1080&origin=${window.location.origin}`}
+                            className="absolute top-0 left-0 w-full h-full border-0 select-none shadow-2xl"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                             allowFullScreen
+                            title={activeVideo.title}
                         />
                     </div>
-                    <div className="p-4 flex items-start justify-between">
-                        <div>
-                            <h3 className="text-white font-bold text-base">{activeVideo.title}</h3>
-                            {activeVideo.description && <p className="text-slate-400 text-sm mt-1">{activeVideo.description}</p>}
+                    <div className="p-8 flex flex-col md:flex-row items-center md:items-start justify-between bg-gradient-to-b from-[#0f172a]/50 to-[#0b1121] border-t border-white/5 gap-6">
+                        <div className="space-y-3 text-center md:text-left">
+                            <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
+                                <span className={`text-[10px] font-black px-3.5 py-1.5 rounded-full border tracking-tighter shadow-sm ${subjectColors[activeVideo.subject] || 'text-slate-400 bg-slate-700/50 border-slate-600/30'}`}>
+                                    {activeVideo.subject.toUpperCase()}
+                                </span>
+                                <span className="flex items-center space-x-2 px-3.5 py-1.5 bg-red-600/10 rounded-full border border-red-500/20">
+                                    <span className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse shadow-[0_0_5px_rgba(220,38,38,0.5)]" />
+                                    <span className="text-red-500 text-[10px] font-black tracking-[0.2em] uppercase">Cinema Mode</span>
+                                </span>
+                            </div>
+                            <h3 className="text-white font-black text-2xl md:text-4xl tracking-tighter leading-none">{activeVideo.title}</h3>
+                            {activeVideo.description && <p className="text-slate-400 text-sm md:text-lg leading-relaxed max-w-4xl opacity-70 font-medium">{activeVideo.description}</p>}
                         </div>
-                        <button onClick={() => setActiveVideo(null)} className="text-slate-500 hover:text-white text-xs ml-4 shrink-0 mt-1">✕ Close</button>
+                        <button onClick={() => setActiveVideo(null)}
+                            className="bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white px-8 py-3.5 rounded-2xl text-xs font-black flex items-center space-x-3 transition-all shadow-xl backdrop-blur-3xl border border-white/10 group active:scale-95 shrink-0 uppercase tracking-widest">
+                            <span className="group-hover:rotate-90 transition-transform duration-300">✕</span>
+                            <span>Close Player</span>
+                        </button>
                     </div>
                 </div>
             )}

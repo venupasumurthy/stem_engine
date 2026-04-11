@@ -38,16 +38,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, pyqs 
         { id: 'dashboard', label: t.sidebar.dashboard, icon: LayoutDashboard },
         { id: 'solver', label: t.sidebar.solver, icon: Atom, hasArrow: true },
         { id: 'concepts', label: t.sidebar.concepts, icon: Compass },
-        { id: 'practice', label: t.sidebar.practice, icon: Target },
+        ...(!isTeacher ? [{ id: 'practice', label: t.sidebar.practice, icon: Target }] : []),
         { id: 'pyqbank', label: t.sidebar.pyqbank, icon: BookMarked, badge: pyqs.length > 0 ? pyqs.length : undefined },
         { id: 'videos', label: 'Video Library', icon: Youtube },
-        { id: 'analytics', label: t.sidebar.analytics, icon: BarChart2 },
+        ...(!isTeacher ? [{ id: 'analytics', label: t.sidebar.analytics, icon: BarChart2 }] : []),
         { id: 'achievements', label: t.sidebar.achievements, icon: Trophy },
     ];
 
     // Teacher-only item
     const teacherItems = isTeacher
-        ? [{ id: 'teacher', label: 'Teacher Portal', icon: GraduationCap }]
+        ? [
+            { id: 'teacher', label: 'Teacher Portal', icon: GraduationCap },
+            { id: 'teacher_exams', label: 'Exams', icon: Target }
+          ]
         : [];
 
     const bottomItems = [
@@ -60,8 +63,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, pyqs 
         <div className="w-64 bg-[#0b1121] h-screen flex flex-col hidden md:flex shadow-2xl z-20">
             {/* Logo */}
             <div className="p-6 flex items-center space-x-3 mb-4">
-                <div className="bg-brand-accent/20 p-2 rounded-lg">
-                    <Atom className="text-brand-accent w-6 h-6" />
+                <div className="w-12 h-12 flex-shrink-0">
+                    <img src="/logo.png" alt="STEM Engine Logo" className="w-full h-full object-contain" />
                 </div>
                 <div>
                     <h1 className="text-white font-bold text-lg tracking-wide leading-tight">STEM Engine</h1>

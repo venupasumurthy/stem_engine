@@ -76,6 +76,11 @@ export const ProblemSolver: React.FC<ProblemSolverProps> = ({ onAddPyq, language
                 setPlotData(null);
                 setMarkAsPyq(false);
                 setPyqSaved(false);
+                // Atomic solve trigger:
+                setTimeout(() => {
+                    const btn = document.getElementById('solve-trigger-btn');
+                    if (btn) btn.click();
+                }, 150);
             }
         };
         window.addEventListener('pyq-practice', handler);
@@ -753,6 +758,7 @@ export const ProblemSolver: React.FC<ProblemSolverProps> = ({ onAddPyq, language
             <div className="flex flex-wrap gap-3 mb-8">
                 <button
                     type="button"
+                    id="solve-trigger-btn"
                     onClick={() => handleSolve()}
                     disabled={isSolving || !problemText.trim()}
                     className="bg-brand-accent hover:bg-blue-400 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-2.5 px-6 rounded-xl flex items-center space-x-2 transition-all shadow-lg shadow-brand-accent/20 active:scale-95 text-sm"

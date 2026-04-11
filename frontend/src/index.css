@@ -56,3 +56,33 @@
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-brand-muted;
 }
+
+@keyframes loading-bar {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  50% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-loading-bar {
+  animation: loading-bar 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translate(-50%, -16px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* Prevent text selection / right-click in exam fullscreen */
+.exam-locked {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}

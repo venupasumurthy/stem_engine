@@ -231,8 +231,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                 <div className="absolute bottom-20 right-10 w-64 h-64 bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none" />
 
                 <div className="flex items-center space-x-3 relative z-10">
-                    <div className="bg-blue-500/20 border border-blue-400/30 p-2.5 rounded-xl shadow-lg">
-                        <Atom className="w-7 h-7 text-blue-400" />
+                    <div className="w-12 h-12 flex-shrink-0">
+                        <img src="/logo.png" alt="STEM Engine Logo" className="w-full h-full object-contain" />
                     </div>
                     <div>
                         <h1 className="text-white font-bold text-xl tracking-wide">STEM Engine</h1>
@@ -285,7 +285,9 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             <div className="flex-1 flex items-center justify-center p-6 lg:p-14 relative overflow-y-auto">
                 {/* Mobile logo */}
                 <div className="absolute top-6 left-6 flex items-center space-x-2 lg:hidden">
-                    <div className="bg-blue-500/20 p-1.5 rounded-lg"><Atom className="w-5 h-5 text-blue-400" /></div>
+                    <div className="w-8 h-8 flex-shrink-0">
+                        <img src="/logo.png" alt="STEM Engine Logo" className="w-full h-full object-contain" />
+                    </div>
                     <span className="text-white font-bold text-base">STEM Engine</span>
                 </div>
 

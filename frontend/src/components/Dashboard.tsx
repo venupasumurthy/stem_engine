@@ -22,8 +22,8 @@ export const Dashboard: React.FC<{
                     </p>
                     <button
                         onClick={() => onNavigate?.('solver')}
-                        className="bg-brand-accent hover:bg-blue-600 text-white font-medium py-2.5 px-5 rounded-lg transition-colors flex items-center space-x-2 shadow-lg shadow-brand-accent/20">
-                        <Atom className="w-4 h-4" />
+                        className="bg-brand-accent hover:bg-blue-600 text-white font-medium py-2.5 px-6 rounded-xl transition-all flex items-center space-x-2.5 shadow-lg shadow-brand-accent/25 hover:scale-[1.02] active:scale-[0.98]">
+                        <img src="/logo.png" alt="" className="w-5 h-5 object-contain" />
                         <span>{t.dashboard.solve_btn}</span>
                         <ChevronRight className="w-4 h-4" />
                     </button>

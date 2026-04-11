@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import {
     Settings, User, Bell, Shield, Palette, Monitor, Moon, Sun,
-    ChevronRight, Check, Volume2, VolumeX, Globe, BookOpen, Zap
+    ChevronRight, Check, Volume2, VolumeX, Globe, BookOpen, Zap, Camera, Loader
 } from 'lucide-react';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage } from '../firebase';
 import { translations, Language } from '../translations';
 
 interface SettingsProps {
-    user?: { name: string; email: string; role?: 'teacher' | 'student'; community_name?: string };
+    user?: { name: string; email: string; uid: string; role?: 'teacher' | 'student'; community_name?: string; photoURL?: string };
     onLogout?: () => void;
+    onUpdateProfile?: (data: Partial<{ name: string; photoURL: string }>) => Promise<void>;
     language: Language;
     onLanguageChange: (lang: Language) => void;
     theme: 'dark' | 'light' | 'system';
@@ -25,6 +28,27 @@ export const SettingsPage: React.FC<SettingsProps> = ({ user, onLogout, language
     const [sounds, setSounds] = useState(true);
     const [defaultLevel, setDefaultLevel] = useState('Step by Step');
     const [saved, setSaved] = useState(false);
+    const [uploading, setUploading] = useState(false);
+
+    const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file || !user?.uid || !onUpdateProfile) return;
+
+        setUploading(true);
+        try {
+            const photoRef = ref(storage, `profiles/${user.uid}/avatar`);
+            await uploadBytes(photoRef, file);
+            const url = await getDownloadURL(photoRef);
+            await onUpdateProfile({ photoURL: url });
+            setSaved(true);
+            setTimeout(() => setSaved(false), 2000);
+        } catch (err) {
+            console.error("Photo upload failed:", err);
+            alert("Failed to upload photo. Check Firebase Storage rules.");
+        } finally {
+            setUploading(false);
+        }
+    };
 
     const handleSave = () => {
         setSaved(true);
@@ -92,16 +116,36 @@ export const SettingsPage: React.FC<SettingsProps> = ({ user, onLogout, language
                         <div className="space-y-6">
                             <SectionHeader title="Profile Information" desc="Update your name and account details." />
 
-                            <div className="flex items-center space-x-4">
-                                <div className="w-16 h-16 rounded-2xl bg-blue-600/20 flex items-center justify-center text-xl font-bold text-blue-300 shrink-0">
-                                    {initials}
+                            <div className="flex items-center space-x-6">
+                                <div className="relative group">
+                                    <div className="w-20 h-20 rounded-2xl bg-blue-600/20 border-2 border-dashed border-blue-500/30 flex items-center justify-center overflow-hidden shrink-0 transition-all group-hover:border-blue-500/60 shadow-lg">
+                                        {user?.photoURL ? (
+                                            <img src={user.photoURL} alt="Profile" className="w-full h-full object-cover" />
+                                        ) : (
+                                            <span className="text-2xl font-bold text-blue-300">{initials}</span>
+                                        )}
+                                        {uploading ? (
+                                            <div className="absolute inset-0 bg-[#0f172a]/80 flex items-center justify-center">
+                                                <Loader className="w-6 h-6 text-blue-400 animate-spin" />
+                                            </div>
+                                        ) : (
+                                            <label className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
+                                                <Camera className="w-6 h-6 text-white" />
+                                                <input type="file" className="hidden" accept="image/*" onChange={handlePhotoUpload} />
+                                            </label>
+                                        )}
+                                    </div>
+                                    <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 border-2 border-[#0f172a] rounded-full shadow-sm" />
                                 </div>
                                 <div>
-                                    <p className="text-white font-semibold">{user?.name ?? 'Guest'}</p>
-                                    <p className="text-slate-400 text-sm">{user?.email ?? 'guest@stem.local'}</p>
-                                    <span className="mt-1 inline-block text-[10px] font-bold bg-emerald-500/15 text-emerald-400 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                                        Free Plan
-                                    </span>
+                                    <h4 className="text-white font-bold text-lg leading-tight">{user?.name ?? 'Guest'}</h4>
+                                    <p className="text-slate-400 text-sm mt-0.5">{user?.email ?? 'guest@stem.local'}</p>
+                                    <div className="flex items-center space-x-2 mt-2">
+                                        <span className="text-[10px] font-black bg-blue-500/10 text-blue-400 px-2.5 py-1 rounded-md uppercase tracking-wider border border-blue-500/20">
+                                            {user?.role === 'teacher' ? 'Faculty Admin' : 'Scholar Student'}
+                                        </span>
+                                        <span className="text-[10px] font-bold text-slate-500 italic">ID: {user?.uid.slice(0, 8)}...</span>
+                                    </div>
                                 </div>
                             </div>
 

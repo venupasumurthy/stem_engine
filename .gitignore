@@ -45,6 +45,10 @@ ENV/
 dist-ssr
 *.local
 
+# Firebase cache and temp files
+.firebase/
+git_status.txt
+
 # Editor directories and files
 .vscode
 .idea

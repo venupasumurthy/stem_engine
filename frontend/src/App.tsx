@@ -17,6 +17,7 @@ import { LoginPage } from './components/LoginPage';
 import { SettingsPage } from './components/SettingsPage';
 import { YouTubeVideos } from './components/YouTubeVideos';
 import { TeacherPortal } from './components/TeacherPortal';
+import { TeacherExams } from './components/TeacherExams';
 import { translations, Language } from './translations';
 import { Globe, GraduationCap, BookOpen } from 'lucide-react';
 
@@ -27,6 +28,7 @@ interface User {
     role: 'teacher' | 'student';
     community_id?: string;
     community_name?: string;
+    photoURL?: string;
 }
 
 export interface Activity {
@@ -138,6 +140,7 @@ function App() {
                         role: data.role,
                         community_id: data.community_id,
                         community_name: data.community_name,
+                        photoURL: data.photoURL,
                     };
                     setUser(userData);
                     localStorage.setItem('stem_user', JSON.stringify(userData));
@@ -151,6 +154,13 @@ function App() {
         return () => unsub();
     }, []);
 
+    // ── Enforce Role Restrictions
+    useEffect(() => {
+        if (user && user.role === 'teacher' && (activeTab === 'practice' || activeTab === 'analytics')) {
+            setActiveTab('teacher');
+        }
+    }, [user, activeTab]);
+
     // ── Firestore PYQ Bank (real-time) ─────────────────────────
     useEffect(() => {
         if (!user) return;
@@ -161,7 +171,11 @@ function App() {
         return () => unsub();
     }, [user]);
 
-    const handleLogin = (u: User) => { setUser(u); localStorage.setItem('stem_user', JSON.stringify(u)); };
+    const handleLogin = (u: User) => { 
+        setUser(u); 
+        localStorage.setItem('stem_user', JSON.stringify(u)); 
+        if (u.role === 'teacher') setActiveTab('teacher');
+    };
 
     const handleLogout = async () => {
         await signOut(auth);
@@ -185,6 +199,33 @@ function App() {
         if (id) await deleteDoc(doc(db, 'universal_pyqs', id));
     };
 
+    const handleAddExamResult = async (result: any) => {
+        if (!user) return;
+        try {
+            await addDoc(collection(db, 'exam_results'), {
+                ...result,
+                studentUid: user.uid,
+                studentName: user.name,
+                studentEmail: user.email,
+                community_id: user.community_id || 'none'
+            });
+        } catch (e) {
+            console.error('Error saving exam result:', e);
+        }
+    };
+
+    const handleUpdateProfile = async (data: Partial<{ name: string; photoURL: string }>) => {
+        if (!user) return;
+        try {
+            await setDoc(doc(db, 'profiles', user.uid), data, { merge: true });
+            const newUser = { ...user, ...data };
+            setUser(newUser);
+            localStorage.setItem('stem_user', JSON.stringify(newUser));
+        } catch (e) {
+            console.error('Error updating profile:', e);
+        }
+    };
+
     const handlePractice = (q: PyqItem) => {
         setActiveTab('solver');
         window.dispatchEvent(new CustomEvent('pyq-practice', { detail: q.question }));
@@ -206,14 +247,25 @@ function App() {
         settings: t.sidebar.settings,
         videos: 'Video Library',
         teacher: 'Teacher Portal',
+        teacher_exams: 'Teacher Exams',
     };
 
     if (authLoading) {
         return (
             <div className="h-screen bg-[#050c1a] flex items-center justify-center">
-                <div className="flex flex-col items-center space-y-4">
-                    <div className="w-12 h-12 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin" />
-                    <p className="text-slate-400 text-sm font-medium animate-pulse">Initializing STEM Engine…</p>
+                <div className="flex flex-col items-center space-y-6">
+                    <div className="w-20 h-20 relative">
+                        {/* Glow effect */}
+                        <div className="absolute inset-0 bg-blue-500/20 blur-2xl rounded-full animate-pulse" />
+                        <img src="/logo.png" alt="STEM Engine Logo" className="w-full h-full object-contain relative z-10 animate-bounce" />
+                    </div>
+                    <div className="flex flex-col items-center space-y-2">
+                        <p className="text-white text-lg font-bold tracking-widest uppercase">STEM Engine</p>
+                        <div className="w-48 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                            <div className="h-full bg-gradient-to-r from-blue-600 to-indigo-600 animate-loading-bar" />
+                        </div>
+                        <p className="text-slate-500 text-[10px] font-medium tracking-tight">Initializing AI systems...</p>
+                    </div>
                 </div>
             </div>
         );
@@ -260,12 +312,16 @@ function App() {
                         {/* Avatar */}
                         <button onClick={() => setActiveTab('settings')}
                             className="flex items-center space-x-2 px-3 py-1.5 rounded-xl hover:bg-brand-surface/50 transition-all group">
-                            <div className={`w-7 h-7 rounded-full flex items-center justify-center shadow-sm ${isTeacher ? 'bg-blue-600/20 border border-blue-500/30' : 'bg-purple-600/20 border border-purple-500/30'}`}>
-                                <span className={`text-[11px] font-bold ${isTeacher ? 'text-blue-300' : 'text-purple-300'}`}>
-                                    {user.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)}
-                                </span>
+                            <div className={`w-8 h-8 rounded-xl flex items-center justify-center shadow-lg overflow-hidden shrink-0 ${isTeacher ? 'bg-blue-600/20 border border-blue-500/30' : 'bg-purple-600/20 border border-purple-500/30'}`}>
+                                {user.photoURL ? (
+                                    <img src={user.photoURL} alt="" className="w-full h-full object-cover" />
+                                ) : (
+                                    <span className={`text-[11px] font-bold ${isTeacher ? 'text-blue-300' : 'text-purple-300'}`}>
+                                        {user.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)}
+                                    </span>
+                                )}
                             </div>
-                            <span className="text-sm text-brand-muted group-hover:text-white transition-colors hidden sm:block">{user.name.split(' ')[0]}</span>
+                            <span className="text-sm font-semibold text-brand-muted group-hover:text-white transition-colors hidden sm:block truncate max-w-[100px]">{user.name.split(' ')[0]}</span>
                         </button>
                     </div>
                 </header>
@@ -275,16 +331,18 @@ function App() {
                     {activeTab === 'dashboard' && <Dashboard onNavigate={setActiveTab} language={language} activities={activities} stats={user as any} />}
                     {activeTab === 'solver' && <ProblemSolver onAddPyq={handleAddPyq} language={language} onSolveSuccess={() => addActivity({ title: 'Solved a Problem', category: 'Solver', xp: '+20 XP', type: 'solve' })} />}
                     {activeTab === 'concepts' && <Concepts onUseFormula={handleUseFormula} language={language} onTopicSelect={topic => addActivity({ title: topic, category: 'Concepts', xp: '+5 XP', type: 'concept' })} role={user.role} />}
-                    {activeTab === 'practice' && <Practice onSolveProblem={handleUseFormula} language={language} />}
-                    {activeTab === 'pyqbank' && <PYQBank pyqs={pyqs} onRemovePyq={handleRemovePyq} onPractice={handlePractice} language={language} />}
+                    {activeTab === 'practice' && <Practice onSolveProblem={handleUseFormula} language={language} user={user} onAddExamResult={handleAddExamResult} />}
+                    {activeTab === 'pyqbank' && <PYQBank pyqs={pyqs} onAddPyq={handleAddPyq} onRemovePyq={handleRemovePyq} onPractice={handlePractice} language={language} />}
                     {activeTab === 'analytics' && <Analytics language={language} />}
                     {activeTab === 'achievements' && <Achievements language={language} />}
                     {activeTab === 'videos' && <YouTubeVideos role={user.role} communityId={user.community_id} />}
                     {activeTab === 'teacher' && isTeacher && <TeacherPortal user={user} />}
+                    {activeTab === 'teacher_exams' && isTeacher && <TeacherExams user={user} />}
                     {activeTab === 'settings' && (
                         <SettingsPage
                             user={user}
                             onLogout={handleLogout}
+                            onUpdateProfile={handleUpdateProfile}
                             language={language}
                             onLanguageChange={setLanguage}
                             theme={theme}
