@@ -21,7 +21,7 @@ interface SettingsProps {
 
 type Section = 'profile' | 'ai' | 'appearance' | 'notifications' | 'privacy' | 'learning';
 
-export const SettingsPage: React.FC<SettingsProps> = ({ user, onLogout, language: globalLanguage, onLanguageChange, theme, setTheme, accent, setAccent }) => {
+export const SettingsPage: React.FC<SettingsProps> = ({ user, onLogout, onUpdateProfile, language: globalLanguage, onLanguageChange, theme, setTheme, accent, setAccent }) => {
     const t = translations[globalLanguage];
     const [activeSection, setActiveSection] = useState<Section>('profile');
     const [notifications, setNotifications] = useState({ streaks: true, tips: true, updates: false });

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Atom, Shell, Sigma, Play, CheckCircle2, XCircle, Bookmark, ChevronDown, Wifi, WifiOff, Clock, BookOpen, AlertCircle, Loader } from 'lucide-react';
+import { Atom, Shell, Sigma, Play, CheckCircle2, XCircle, Bookmark, ChevronDown, Wifi, WifiOff, Clock, BookOpen, AlertCircle, Loader, FileText } from 'lucide-react';
 import { questionBank, Question } from '../data/questionBank';
 import { Language } from '../translations';
 import { db } from '../firebase';

@@ -46,7 +46,6 @@ export const GraphView: React.FC<GraphViewProps> = ({ data, loading }) => {
 
     return (
         <div className="h-full w-full bg-brand-surface rounded-xl border border-brand-muted/20 overflow-hidden shadow-lg">
-            {/* @ts-ignore */}
             <Plot
                 data={plotDataList}
                 layout={{
@@ -55,13 +54,13 @@ export const GraphView: React.FC<GraphViewProps> = ({ data, loading }) => {
                     plot_bgcolor: 'transparent',
                     font: { color: '#f8fafc', family: 'Inter, sans-serif' },
                     margin: { l: 50, r: 30, t: 30, b: 50 },
-                    xaxis: { title: data.xaxis_title || 'x', gridcolor: '#334155', zerolinecolor: '#475569' },
-                    yaxis: { title: data.yaxis_title || 'y', gridcolor: '#334155', zerolinecolor: '#475569' },
+                    xaxis: { title: { text: data.xaxis_title || 'x' } as any, gridcolor: '#334155', zerolinecolor: '#475569' },
+                    yaxis: { title: { text: data.yaxis_title || 'y' } as any, gridcolor: '#334155', zerolinecolor: '#475569' },
                     scene: data.type === '3d' ? {
-                        xaxis: { title: data.xaxis_title || 'x', backgroundcolor: 'transparent', gridcolor: '#334155' },
-                        yaxis: { title: data.yaxis_title || 'y', backgroundcolor: 'transparent', gridcolor: '#334155' },
-                        zaxis: { title: data.zaxis_title || 'z', backgroundcolor: 'transparent', gridcolor: '#334155' },
-                    } : undefined
+                        xaxis: { title: { text: data.xaxis_title || 'x' } as any, backgroundcolor: 'transparent', gridcolor: '#334155' },
+                        yaxis: { title: { text: data.yaxis_title || 'y' } as any, backgroundcolor: 'transparent', gridcolor: '#334155' },
+                        zaxis: { title: { text: data.zaxis_title || 'z' } as any, backgroundcolor: 'transparent', gridcolor: '#334155' },
+                    } as any : undefined
                 }}
                 useResizeHandler={true}
                 style={{ width: '100%', height: '100%' }}

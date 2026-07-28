@@ -106,7 +106,13 @@ function App() {
             try { setUser(JSON.parse(stored)); } catch { }
         }
 
+        // Safety timeout: if Firebase never calls back (network issue), show login after 5s
+        const timeout = setTimeout(() => {
+            setAuthLoading(false);
+        }, 5000);
+
         const unsub = onAuthStateChanged(auth, async firebaseUser => {
+            clearTimeout(timeout);
             if (!firebaseUser) {
                 setUser(null);
                 localStorage.removeItem('stem_user');
@@ -151,7 +157,7 @@ function App() {
             setAuthLoading(false);
         });
 
-        return () => unsub();
+        return () => { unsub(); clearTimeout(timeout); };
     }, []);
 
     // ── Enforce Role Restrictions
